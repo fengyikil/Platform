@@ -1,0 +1,12 @@
+#ifndef TRANSCTION_GLOBAL_H
+#define TRANSCTION_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(TRANSCTION_LIBRARY)
+#  define TRANSCTIONSHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define TRANSCTIONSHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // TRANSCTION_GLOBAL_H
