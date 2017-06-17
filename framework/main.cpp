@@ -50,8 +50,8 @@ int main(int argc, char *argv[])
 //    lm.lw_close();
 //    check();
 //    ManageComm mange;
-    MainWindow w;
-    w.show();
+//    MainWindow w;
+//    w.show();
 
     return a.exec();
 }

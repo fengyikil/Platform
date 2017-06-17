@@ -15,6 +15,7 @@ Dialog::Dialog(QWidget *parent) :
     connect(socket,SIGNAL(connected()), this, SLOT(connected()));
     connect(socket,SIGNAL(disconnected()), this, SLOT(disconnected()));
     connect(socket,SIGNAL(readyRead()), this, SLOT(readyRead()));
+    setWindowFlags(Qt::WindowMinimizeButtonHint|Qt::WindowCloseButtonHint);
 }
 
 Dialog::~Dialog()
@@ -24,36 +25,44 @@ Dialog::~Dialog()
 
 void Dialog::connected()
 {
-  ui->pushButton_connect->setText("disconnect");
+    ui->pushButton_connect->setText("disconnect");
 }
 
 void Dialog::disconnected()
 {
+    socket->close();
     ui->pushButton_connect->setText("connect");
 }
 
 void Dialog::readyRead()
 {
- buf.append(socket->readAll());
- char* p = (char*)&packRec;
- if(buf.length()>=sizeof(struct Pack))
- {
-     memcpy(p,buf.data(),sizeof(struct Pack));
-     buf.remove(0,sizeof(struct Pack));
-     ui->label_rarg1->setText(QString::number(packRec.data.arg1));
-     ui->label_rarg2->setText(QString::number(packRec.data.arg1));
- }
+    buf.append(socket->readAll());
+    char* p = (char*)&packRec;
+    if(buf.length()>=sizeof(struct Pack))
+    {
+        memcpy(p,buf.data(),sizeof(struct Pack));
+        buf.remove(0,sizeof(struct Pack));
+        ui->label_rarg1->setText(QString::number(packRec.data.arg1));
+        ui->label_rarg2->setText(QString::number(packRec.data.arg1));
+    }
 }
 
 void Dialog::on_pushButton_connect_clicked()
 {
-    QString ip = ui->lineEdit_ip->text();
-    int port = ui->lineEdit_port->text().toInt();
-    socket->connectToHost(ip,port);
-
-    if(!socket->waitForConnected(5000))
+    if(socket->isOpen())
     {
-       qDebug() << "Error: " <<  socket->errorString();
+        socket->close();
+    }
+    else
+    {
+        QString ip = ui->lineEdit_ip->text();
+        int port = ui->lineEdit_port->text().toInt();
+        socket->connectToHost(ip,port);
+
+        if(!socket->waitForConnected(5000))
+        {
+            qDebug() << "Error: " <<  socket->errorString();
+        }
     }
 }
 

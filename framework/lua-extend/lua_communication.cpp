@@ -13,6 +13,7 @@ int  fk_comu_getId(lua_State* L)
     BaseCommunication* bc =(BaseCommunication*)lua_touserdata(L,1);
     int id = bc->id;
     lua_pushinteger(L, id);
+
     return 1;
 }
 
@@ -45,6 +46,11 @@ int  fk_comu_getInt(lua_State* L)
     int pos = lua_tointeger(L,2);
     int c = bc->rbfifo->getShort(pos);
     lua_pushinteger(L, c);
+    printf("ssssss : %d\n",QThread::currentThreadId());
+//    while(1)
+//    {
+//        QThread::msleep(100);
+//    }
     return 1;
 }
 int  fk_comu_getFloat(lua_State* L)
@@ -86,7 +92,14 @@ int fk_comu_getObj(lua_State* L)
        bc->rbfifo->getObj(obj,pos,size);
     else
        qDebug()<<"fk_comu_getObj:obj is nullptr";
-    return 1;
+    return 0;
+}
+int fk_comu_out(lua_State* L)
+{
+    BaseCommunication* bc =(BaseCommunication*)lua_touserdata(L,1);
+    int size = lua_tointeger(L,2);
+    bc->rbfifo->outQue(size);
+    return 0;
 }
 
 void lua_communication_register(lua_State *L)
@@ -100,6 +113,8 @@ void lua_communication_register(lua_State *L)
     lua_register(L, "fk_comu_getDouble", fk_comu_getDouble);
     lua_register(L, "fk_comu_getStr", fk_comu_getStr);
     lua_register(L, "fk_comu_getObj", fk_comu_getObj);
+    lua_register(L, "fk_comu_out", fk_comu_out);
+
 }
 
 

@@ -6,19 +6,6 @@
 #include "QSettings"
 #include "QDebug"
 #include <QApplication>
-//void BaseCommunication::init()
-//{
-
-//}
-//void TcpSeverCommunication::init()
-//{
-
-//}
-//ManageComm::ManageComm()
-//{
-//    moveToThread(this);
-//    start();
-//}
 
 //void ManageComm::init()
 //{
@@ -39,11 +26,7 @@
 ////   QString id = "port1";
 //}
 
-//void ManageComm::run()
-//{
-//    init();
-//    exec();
-//}
+
 
 
 
@@ -68,8 +51,12 @@ ManageComm::~ManageComm()
 void ManageComm::init()
 {
     qDebug()<<"ManageComm init"<<"ID is"<<QThread::currentThreadId();
-    TcpSeverCommunication* tsc = new TcpSeverCommunication("172.11.0.64",999,1,2048);
-    comuMap.insert(1,tsc);
+    TcpSeverCommunication* tsc1 = new TcpSeverCommunication("127.0.0.1",990,1,2048);
+    TcpSeverCommunication* tsc2 = new TcpSeverCommunication("127.0.0.1",991,2,2048);
+
+    comuMap.insert(1,tsc1);
+    comuMap.insert(2,tsc2);
+
 }
 
 void ManageComm::finish()
@@ -140,11 +127,13 @@ void TcpSeverCommunication::Send()
 }
 
 void TcpSeverCommunication::newConnection(){
-    //只能有一个连接
+    //保证只能有一个客户端连接
     if(socket!=nullptr)
     {
-        if(socket->isOpen())
-            socket->close();
+        socket->close();
+        delete socket;
+        socket = nullptr;
+        qDebug()<<"delete socket";
     }
     socket = server->nextPendingConnection();
     connect(socket,SIGNAL(readyRead()),this,SLOT(readyRead()));

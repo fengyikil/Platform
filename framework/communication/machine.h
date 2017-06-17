@@ -27,7 +27,7 @@ class LuaMachine:public QObject
 {
     Q_OBJECT
 public:
-    LuaMachine(const char* file="../../framework_run/script/test.lua",regist_callback rcfun=default_regist_callback);
+    LuaMachine(const char* file="../../../SimpleAlgorithm/framework_run/script/demo.lua",regist_callback rcfun=default_regist_callback);
     ~LuaMachine();
     bool open_file(const char* file,regist_callback rcfun);
     //注册到 lua虚拟机的c函数，用于 lua-extend

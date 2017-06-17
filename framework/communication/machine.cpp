@@ -282,20 +282,50 @@ void LuaMachine::clear_stack()
     lua_settop(mState, 0);
 }
 
+#pragma pack(1)
+struct HeadPack
+{
+   int len;
+};
+struct PackData
+{
+    int arg1;
+    int arg2;
+};
+struct Pack
+{
+    struct HeadPack head;
+    struct PackData data;
+};
+
 void LuaMachine::mesgRec(BaseCommunication* comt)
 {
     int res;
-    qDebug()<<"mesgRec come in";
+    qDebug()<<"mesgRec come in"<<QThread::currentThreadId();
     QByteArray buf(comt->rbfifo->len(),'\0');
-    comt->rbfifo->outQue(buf.data(),comt->rbfifo->len());
-    qDebug()<<"rec is"<<buf;
-    char str[]="hhhh";
-    comt->sbfifo->inQue(str,4);
-    call_func("test_run",">i",&res);
-    printf("mesgRec1 : res is %d\n",res);
 
-    call_func("test_commu","l>i",comt,&res);
-    printf("mesgRec2 : res is %d\n",res);
+//    qDebug()<<comt->rbfifo->getInt(0);
+//    qDebug()<<comt->rbfifo->getInt(4);
+//    qDebug()<<comt->rbfifo->getInt(8);
+
+call_func("handleMesg","l>i",comt,&res);
+
+//    comt->rbfifo->outQue(buf.data(),comt->rbfifo->len());
+//     Pack* pk = (Pack*)buf.data();
+
+//     qDebug()<<pk->head.len;
+//     qDebug()<<pk->data.arg1;
+//     qDebug()<<pk->data.arg2;
+
+//    qDebug()<<"rec is"<<buf;
+//    char str[]="hhhh";
+//    comt->sbfifo->inQue(str,4);
+
+//    call_func("test_run",">i",&res);
+//    printf("mesgRec1 : res is %d\n",res);
+
+//    call_func("test_commu","l>i",comt,&res);
+//    printf("mesgRec2 : res is %d\n",res);
 
     //   emit comt->lm->mesgSend();
 }
